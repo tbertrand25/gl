@@ -9,8 +9,6 @@ import (
 )
 
 func main() {
-	// Ensure we have a valid command
-
 	if os.Args[1] == "search-repo" {
 		if len(os.Args) == 3 {
 			client := gitlab.MakeGlClient()
@@ -60,6 +58,32 @@ func main() {
 			client := gitlab.MakeGlClient()
 			path := os.Args[2]
 			client.SetDefaultBranch(path)
+		}
+	} else if os.Args[1] == "get-subprojects" {
+		if len(os.Args) == 3 {
+			client := gitlab.MakeGlClient()
+			path := os.Args[2]
+			projects, err := client.GetSubprojects(path)
+			if err != nil {
+				fmt.Println(err)
+			}
+			fmt.Println(projects)
+		}
+	} else if os.Args[1] == "merge-request" {
+		if len(os.Args) == 7 {
+			//gl merge-request <title> <repo> <source> <dest> <assignee>
+			client := gitlab.MakeGlClient()
+			title := os.Args[2]
+			repo := os.Args[3]
+			source := os.Args[4]
+			dest := os.Args[5]
+			assignee, _ := strconv.Atoi(os.Args[6])
+			fmt.Println(client.CreateMergeRequest(title, repo, source, dest, assignee))
+		}
+	} else if os.Args[1] == "get-user" {
+		if len(os.Args) == 3 {
+			client := gitlab.MakeGlClient()
+			fmt.Println(client.SearchUsers(os.Args[2]))
 		}
 	}
 }
